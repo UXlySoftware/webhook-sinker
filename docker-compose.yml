@@ -1,0 +1,21 @@
+name: webhook-sinker
+
+services:
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "http"
+      - "http://host.docker.internal:8000"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - 4040:4040
+
+  python-service:
+    image: fastapi-webhook
+    container_name: fastapi
+    volumes:
+      - ./src/python:/app
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
