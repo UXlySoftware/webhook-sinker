@@ -11,15 +11,15 @@ async def verify_signature_decorator(request: Request):
         # Extract the required fields from the request
         body = await request.json()  # Raw request body
         signature = body.pop("signature", None)  # Example header name
-        print(f"Signature: {signature}")
         
         if not signature:
-            raise HTTPException(status_code=400, detail="Signature header missing")
+            raise HTTPException(status_code=400, detail="Signature field missing")
+        
         # Decode the signature
         signature_bytes = base64.b64decode(signature)
         
         # Public key in base64 format
-        pubkey_b64 = "FL75rx0IthykeGQhoMJ+ef7aQOwRXS+PTRsICqSxq3A="
+        pubkey_b64 = "1N7gklNt5gpfMIHhIUR+csMIb7oO4JX7Q7QTdqj7+Qw="
         # Load the public key
         public_key = Ed25519PublicKey.from_public_bytes(
             base64.b64decode(pubkey_b64)

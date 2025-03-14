@@ -3,6 +3,7 @@ name: webhook-sinker
 services:
   ngrok:
     image: ngrok/ngrok:latest
+    container_name: ngrok
     command:
       - "http"
       - "http://host.docker.internal:8000"
