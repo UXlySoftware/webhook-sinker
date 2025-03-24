@@ -1,7 +1,6 @@
 
-[![Watch the tutorial](https://img.youtube.com/vi/UYWcTV2FwVo/maxresdefault.jpg)]
+[![Watch the tutorial](https://img.youtube.com/vi/UYWcTV2FwVo/maxresdefault.jpg)](https://youtu.be/UYWcTV2FwVo)
 
-https://www.youtube.com/watch?v=UYWcTV2FwVo
 # Webhook Sinker
 
 This tiny repo implements a docker stack for locally testing webhooks. It uses [ngrok](https://ngrok.com) to establish an introspective
