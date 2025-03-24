@@ -1,3 +1,7 @@
+
+[![Watch the tutorial](https://img.youtube.com/vi/UYWcTV2FwVo/maxresdefault.jpg)](https://youtu.be/UYWcTV2FwVo)
+
+https://www.youtube.com/watch?v=UYWcTV2FwVo
 # Webhook Sinker
 
 This tiny repo implements a docker stack for locally testing webhooks. It uses [ngrok](https://ngrok.com) to establish an introspective
@@ -10,7 +14,7 @@ Checkout the [1Shot Docs](https://docs.1shotapi.com/transactions.html#webhooks) 
 First, grab your auth token from the [ngrok dashboard](https://dashboard.ngrok.com/endpoints) and bring up the Docker stack:
 
 ```
-sudo NGROK_AUTHTOKEN= docker compose up -d
+sudo NGROK_AUTHTOKEN=<YOUR NGROK TOKEN> docker compose up -d
 ```
 
 You can open [http://localhost:4040](http://localhost:4040) to see the ngrok dashboard to see the **public URL** assigned to your session and also
