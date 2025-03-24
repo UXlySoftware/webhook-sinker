@@ -1,5 +1,5 @@
 
-[![Watch the tutorial](https://img.youtube.com/vi/UYWcTV2FwVo/maxresdefault.jpg)](https://youtu.be/UYWcTV2FwVo)
+[![Watch the tutorial](https://img.youtube.com/vi/UYWcTV2FwVo/maxresdefault.jpg)]
 
 https://www.youtube.com/watch?v=UYWcTV2FwVo
 # Webhook Sinker
