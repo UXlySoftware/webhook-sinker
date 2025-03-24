@@ -3,12 +3,14 @@
 This tiny repo implements a docker stack for locally testing webhooks. It uses [ngrok](https://ngrok.com) to establish an introspective
 tunnel from you local machine to a public URL which you can use as a webhook URL for testing [1Shot API](https://1shotapi.com) webhook callbacks. 
 
+Checkout the [1Shot Docs](https://docs.1shotapi.com/transactions.html#webhooks) for more details on webhooks.
+
 ## 1. Fire Up the Docker Stack
 
 First, grab your auth token from the [ngrok dashboard](https://dashboard.ngrok.com/endpoints) and bring up the Docker stack:
 
 ```
-sudo NGROK_AUTHTOKEN=<Your NGrok Token> docker compose up -d
+sudo NGROK_AUTHTOKEN= docker compose up -d
 ```
 
 You can open [http://localhost:4040](http://localhost:4040) to see the ngrok dashboard to see the **public URL** assigned to your session and also
