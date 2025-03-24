@@ -6,7 +6,7 @@ services:
     container_name: ngrok
     command:
       - "http"
-      - "http://host.docker.internal:8000"
+      - "http://fastapi:8000"
     environment:
       NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
     ports:
@@ -14,9 +14,13 @@ services:
 
   python-service:
     image: fastapi-webhook
+    pull_policy: never
     container_name: fastapi
     volumes:
       - ./src/python:/app
     ports:
       - "8000:8000"
+    environment:
+      WEBHOOK_PUBLIC_KEY: ${WEBHOOK_PUBLIC_KEY}
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    build: ./src/python/
