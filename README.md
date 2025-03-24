@@ -22,7 +22,7 @@ On the [1Shot Endpoints page](https://app.1shotapi.com/endpoints), create a new 
 - Description: Mint free test tokens on the Sepolia Testnet
 - Blockchain: Sepolia
 - Webhook: You NGrok URL with the routhe `/python` appended to the end
-- Contract Address: []`0x17Ed2c50596E1C74175F905918dEd2d2042b87f3`](https://sepolia.etherscan.io/address/0x17Ed2c50596E1C74175F905918dEd2d2042b87f3)
+- Contract Address: [`0x17Ed2c50596E1C74175F905918dEd2d2042b87f3`](https://sepolia.etherscan.io/address/0x17Ed2c50596E1C74175F905918dEd2d2042b87f3)
 - Function Name: `mint`
     - 1st parameter: `to` type `address`
     - 2nd parameter: `amount` type `uint`
