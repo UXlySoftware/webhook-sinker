@@ -7,8 +7,10 @@ services:
     command:
       - "http"
       - "http://fastapi:8000"
+      - "--url=${TUNNEL_BASE_URL}"
     environment:
       NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+      TUNNEL_BASE_URL: ${TUNNEL_BASE_URL}
     ports:
       - 4040:4040
 
@@ -20,7 +22,5 @@ services:
       - ./src/python:/app
     ports:
       - "8000:8000"
-    environment:
-      WEBHOOK_PUBLIC_KEY: ${WEBHOOK_PUBLIC_KEY}
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     build: ./src/python/

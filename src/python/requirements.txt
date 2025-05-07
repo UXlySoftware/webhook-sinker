@@ -1,2 +1,2 @@
 fastapi[standard]
-cryptography==44.0.2
+uxly-1shot-client

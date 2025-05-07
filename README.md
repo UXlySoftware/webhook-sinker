@@ -6,18 +6,22 @@
 This tiny repo implements a docker stack for locally testing webhooks. It uses [ngrok](https://ngrok.com) to establish an introspective
 tunnel from you local machine to a public URL which you can use as a webhook URL for testing [1Shot API](https://1shotapi.com) webhook callbacks. 
 
-Checkout the [1Shot Docs](https://docs.1shotapi.com/transactions.html#webhooks) for more details on webhooks.
+Checkout the [1Shot Docs](https://docs.1shotapi.com/transactions.html#webhooks) for more details on webhooks and also the official [1Shot Python sdk](https://pypi.org/project/uxly-1shot-client/).
 
 ## 1. Fire Up the Docker Stack
 
-First, grab your auth token from the [ngrok dashboard](https://dashboard.ngrok.com/endpoints) and bring up the Docker stack:
+First, may a free account at [ngrok.com](https://ngrok.com) and grab your auth token from the [ngrok dashboard](https://dashboard.ngrok.com/endpoints) and input it in the [`docker-compose.env`](./docker-compose.env).
+
+Also, create a static cloud endpoint by going to the [Domains tab](https://dashboard.ngrok.com/domains) to register a free static URL address. 
+Put the endpoint url (including `https://`) into the `docker-compose.env` file too.
+
+Now bring up the Docker stack:
 
 ```
-sudo NGROK_AUTHTOKEN=<YOUR NGROK TOKEN> docker compose up -d
+docker compose --env-file docker-compose.env up -d
 ```
 
-You can open [http://localhost:4040](http://localhost:4040) to see the ngrok dashboard to see the **public URL** assigned to your session and also
-any requests made against it. 
+You can open [http://localhost:4040](http://localhost:4040) to see HTTP calls arriving at your stack. 
 
 ## 2. Create a 1Shot Transaction Endpoint
 
