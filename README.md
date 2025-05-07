@@ -21,9 +21,6 @@ Log into [1Shot API](https://app.1shotapi.com), if it is your first time it will
 
 On the [API Keys](https://app.1shotapi.com/api-keys) page, create a new API key and secret and input them into the [`docker-compose.env`](/docker-compose.env) file for the `ONESHOT_API_KEY` and `ONESHOT_API_SECRET`. 
 
-> [!NOTE] 
-> You can stop the demo by running `docker compose down`
-
 ### 3. Run the Demo Stack
 
 Now bring up the Docker stack:
@@ -35,6 +32,9 @@ docker compose --env-file docker-compose.env up -d
 You can open [http://localhost:4040](http://localhost:4040) to see HTTP calls arriving at your stack. 
 
 If you go to the ["My Endpoints"](https://app.1shotapi.com/endpoints) page in 1Shot API, you should see and new endpoint created for you called "1Shot Webhook Demo". 
+
+> [!NOTE] 
+> You can stop the demo by running `docker compose down`
 
 ## 4. Trigger the Transaction Endpoint
 
