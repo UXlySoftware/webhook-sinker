@@ -23,4 +23,9 @@ services:
     ports:
       - "8000:8000"
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      TUNNEL_BASE_URL: ${TUNNEL_BASE_URL}
+      ONESHOT_API_KEY: ${ONESHOT_API_KEY}
+      ONESHOT_API_SECRET: ${ONESHOT_API_SECRET}
+      ONESHOT_BUSINESS_ID: ${ONESHOT_BUSINESS_ID}
     build: ./src/python/

@@ -8,12 +8,20 @@ tunnel from you local machine to a public URL which you can use as a webhook URL
 
 Checkout the [1Shot Docs](https://docs.1shotapi.com/transactions.html#webhooks) for more details on webhooks and also the official [1Shot Python sdk](https://pypi.org/project/uxly-1shot-client/).
 
-## 1. Fire Up the Docker Stack
+## 1. Ngrok Setup
 
-First, may a free account at [ngrok.com](https://ngrok.com) and grab your auth token from the [ngrok dashboard](https://dashboard.ngrok.com/endpoints) and input it in the [`docker-compose.env`](./docker-compose.env).
+First, make a free account at [ngrok.com](https://ngrok.com) and grab your auth token from the [ngrok dashboard](https://dashboard.ngrok.com/endpoints) and input it in the [`docker-compose.env`](./docker-compose.env) for the `NGROK_AUTHTOKEN` variable.
 
 Also, create a static cloud endpoint by going to the [Domains tab](https://dashboard.ngrok.com/domains) to register a free static URL address. 
-Put the endpoint url (including `https://`) into the `docker-compose.env` file too.
+Put the endpoint url (including `https://`) into the `docker-compose.env` file for the `TUNNEL_BASE_URL` variable.
+
+## 2. Get your 1Shot API Credentials 
+
+Log into [1Shot API](https://app.1shotapi.com), if it is your first time it will prompt you to create an organization. Go to your organization's [details page](https://app.1shotapi.com/organizations) and get your Organzation ID to input into [`docker-compose.env`](/docker-compose.env) in the `ONESHOT_BUSINESS_ID` variable.
+
+On the [API Keys](https://app.1shotapi.com/api-keys) page, create a new API key and secret and input them into the [`docker-compose.env`](/docker-compose.env) file for the `ONESHOT_API_KEY` and `ONESHOT_API_SECRET`. 
+
+### 3. Run the Demo Stack
 
 Now bring up the Docker stack:
 
@@ -23,25 +31,8 @@ docker compose --env-file docker-compose.env up -d
 
 You can open [http://localhost:4040](http://localhost:4040) to see HTTP calls arriving at your stack. 
 
-## 2. Create a 1Shot Transaction Endpoint
-
-On the [1Shot Endpoints page](https://app.1shotapi.com/endpoints), create a new endpoint. Here are some example values you can input:
-
-- Name: Sepolia TestToken Mint
-- Description: Mint free test tokens on the Sepolia Testnet
-- Blockchain: Sepolia
-- Webhook: You NGrok URL with the routhe `/python` appended to the end
-- Contract Address: [`0x17Ed2c50596E1C74175F905918dEd2d2042b87f3`](https://sepolia.etherscan.io/address/0x17Ed2c50596E1C74175F905918dEd2d2042b87f3)
-- Function Name: `mint`
-    - 1st parameter: `to` type `address`
-    - 2nd parameter: `amount` type `uint`
-
-## 3. Get the Webhook Public Key
-
-Once you've created the transaction endpoint, click on the details of the endpoint and copy the webhook's public key. Paste this in into the 
-demo server's [main.py](./src/python/main.py#L38) file. The fastAPI server will hot reload. 
+If you go to the ["My Endpoints"](https://app.1shotapi.com/endpoints) page in 1Shot API, you should see and new endpoint created for you called "1Shot Webhook Demo". 
 
 ## 4. Trigger the Transaction Endpoint
 
-On the details page of the transaction you created, using the Input Parameters card to execute a transaction. Watch the ngrok tunnel inspector 
-for callbacks from 1Shot. You should see a `200 OK` message in a few seconds on the `/python` route. 
+On the details page of the "1Shot Webhook Demo" transaction endpoint, enter a recipient address and an amount and click "Execute" in the upper right-hand corner. Watch the [ngrok agent dashboard](http://localhost:4040) for callbacks from 1Shot. You should see a `200 OK` message in a few seconds on the `/python` route. 
