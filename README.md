@@ -21,6 +21,9 @@ Log into [1Shot API](https://app.1shotapi.com), if it is your first time it will
 
 On the [API Keys](https://app.1shotapi.com/api-keys) page, create a new API key and secret and input them into the [`docker-compose.env`](/docker-compose.env) file for the `ONESHOT_API_KEY` and `ONESHOT_API_SECRET`. 
 
+> [!NOTE] 
+> You can stop the demo by running `docker compose down`
+
 ### 3. Run the Demo Stack
 
 Now bring up the Docker stack:
