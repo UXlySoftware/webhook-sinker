@@ -4,7 +4,7 @@
 # Webhook Sinker
 
 This tiny repo implements a docker stack for locally testing webhooks. It uses [ngrok](https://ngrok.com) to establish an introspective
-tunnel from you local machine to a public URL which you can use as a webhook URL for testing [1Shot API](https://1shotapi.com) webhook callbacks. 
+tunnel from you local machine to a static public URL which you can use for testing [1Shot API](https://1shotapi.com) webhook callbacks. 
 
 Checkout the [1Shot Docs](https://docs.1shotapi.com/transactions.html#webhooks) for more details on webhooks and also the official [1Shot Python sdk](https://pypi.org/project/uxly-1shot-client/).
 
