@@ -14,7 +14,7 @@ services:
     ports:
       - 4040:4040
 
-  python-service:
+  fastapi-service:
     image: fastapi-webhook
     pull_policy: never
     container_name: fastapi

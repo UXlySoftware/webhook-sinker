@@ -8,6 +8,9 @@ tunnel from you local machine to a static public URL which you can use for testi
 
 Checkout the [1Shot Docs](https://docs.1shotapi.com/transactions.html#webhooks) for more details on webhooks and also the official [1Shot Python sdk](https://pypi.org/project/uxly-1shot-client/).
 
+> [!IMPORTANT] 
+> Be sure to go to the [Escrow Wallets](https://app.1shotapi.com/escrow-wallets) tab in 1Shot API and create an escrow wallet for Sepolia Network and fund it with some testnet funds (try using Google's [Sepolia Testnet Faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)).
+
 ## 1. Ngrok Setup
 
 First, make a free account at [ngrok.com](https://ngrok.com) and grab your auth token from the [ngrok dashboard](https://dashboard.ngrok.com/endpoints) and input it in the [`docker-compose.env`](./docker-compose.env) for the `NGROK_AUTHTOKEN` variable.
@@ -22,6 +25,12 @@ Log into [1Shot API](https://app.1shotapi.com), if it is your first time it will
 On the [API Keys](https://app.1shotapi.com/api-keys) page, create a new API key and secret and input them into the [`docker-compose.env`](/docker-compose.env) file for the `ONESHOT_API_KEY` and `ONESHOT_API_SECRET`. 
 
 ### 3. Run the Demo Stack
+
+First, build the webhook demo service:
+
+```sh
+docker compose build fastapi-service
+```
 
 Now bring up the Docker stack:
 
