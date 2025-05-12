@@ -20,28 +20,34 @@ logger = logging.getLogger(__name__)
 CALLBACK_URL = os.getenv("TUNNEL_BASE_URL") + "/1shot"
 
 # example of a wrapper class to handle webhook verification with FastAPI
-# you could make a call in here to a database to look up the public key based on the content of body["data"]["transactionId"]
+# rather than looking up the public key from 1Shot API each time, you could store it in a database or cache
 class webhookAuthenticator:
-    def __init__(self, pubkey_b64: str):
-        try:
-            self.public_key = pubkey_b64
-        except ValueError as e:
-            print(f"Error: {e}")
+    def __init__(self):
+        logger.info("Webhook Authenticator initialized.")
 
     async def __call__(self, request: Request):
         try:
             # Extract the required fields from the request
             body = await request.json()  # Raw request body
-            signature = body.pop("signature", None)  # Example header name
+            signature = body.pop("signature", None)  # Pop the signature field from the body
 
             if not signature:
                 raise HTTPException(status_code=400, detail="Signature field missing")
+            
+            # look up the transaction endpoint the generated the callback and get the public key
+            # in a production application, store the public key in a database or cache for faster access
+            transaction_endpoint = await oneshot_client.transactions.get(
+                transaction_id=body["data"]["transactionId"],
+            )
 
-            # Verify the signature
+            if not transaction_endpoint.public_key:
+                raise HTTPException(status_code=400, detail="Public key not found")
+
+            # Verify the signature with the public key you stored corresponding to the transaction ID
             is_valid = verify_webhook(
                 body=body,
                 signature=signature,
-                public_key=self.public_key
+                public_key=transaction_endpoint.public_key
             )
 
             if not is_valid:
@@ -105,11 +111,10 @@ async def lifespan(app: FastAPI):
             business_id=BUSINESS_ID,
             params=endpoint_payload
         )
-        app.state.myWebhook = webhookAuthenticator(transaction_endpoint.public_key)
     else:
-        app.state.myWebhook = webhookAuthenticator(transaction_endpoints.response[0].public_key)
         logger.info(f"Transaction endpoint already exists, skipping creation.")
 
+    app.state.myWebhook = webhookAuthenticator()
     yield
 
 # create the FastAPI app and register the lifespan event
@@ -117,6 +122,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/1shot", dependencies=[Depends(lambda: app.state.myWebhook)])
 async def handle_python_webhook(request: Request):
+    logger.info("Webhook received.")
     return {"message": "Webhook received and signature verified"}
 
 @app.get('/healthcheck')
