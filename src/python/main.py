@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, HTTPException, Depends
 
 from uxly_1shot_client import verify_webhook
+
+# we import the async 1Shot client from the oneshot.py file as a singleton
 from oneshot import oneshot_client, BUSINESS_ID
 
 app = FastAPI()
