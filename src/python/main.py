@@ -66,7 +66,6 @@ async def lifespan(app: FastAPI):
     # lets start by checking that we have an escrow wallet provisioned for our account on the Sepolia network
     # if not we will exit since we must have one to continue
     wallets = await oneshot_client.wallets.list(BUSINESS_ID, {"chain_id": "11155111"})
-    logger.info(f"Wallet balance: {float(wallets.response[0].account_balance_details.balance)}")
     if not ((len(wallets.response) >= 1) and (float(wallets.response[0].account_balance_details.balance) > 0.0001)):
         raise RuntimeError(
             "Escrow wallet not provisioned or insufficient balance on the Sepolia network. "
