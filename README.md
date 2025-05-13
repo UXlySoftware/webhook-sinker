@@ -32,19 +32,20 @@ First, build the webhook demo service:
 docker compose build fastapi-service
 ```
 
-Now bring up the Docker stack:
+Now bring up the Docker stack and follow the server logs:
 
 ```
 docker compose --env-file docker-compose.env up -d
+docker logs -f fastapi
 ```
 
-You can open [http://localhost:4040](http://localhost:4040) to see HTTP calls arriving at your stack. 
+The stack is set to mount the `/src/python` directory into the running container, so if you edit the code in [`/src/python/main.py`](/src/python/main.py) and save, FastAPI will reload the changes for you automatically. If you open [http://localhost:4040](http://localhost:4040) in your browser, you will see HTTP calls arriving at your stack. 
 
-If you go to the ["My Endpoints"](https://app.1shotapi.com/endpoints) page in 1Shot API, you should see and new endpoint created for you called "1Shot Webhook Demo". 
+Check out the ["My Endpoints"](https://app.1shotapi.com/endpoints) page in 1Shot API, you should see and new endpoint created for you called "1Shot Webhook Demo". 
 
 > [!NOTE] 
 > You can stop the demo by running `docker compose down`
 
 ## 4. Trigger the Transaction Endpoint
 
-On the details page of the "1Shot Webhook Demo" transaction endpoint, enter a recipient address and an amount and click "Execute" in the upper right-hand corner. Watch the [ngrok agent dashboard](http://localhost:4040) for callbacks from 1Shot. You should see a `200 OK` message in a few seconds on the `/python` route. 
+On the details page of the "1Shot Webhook Demo" transaction endpoint, enter a recipient address and an amount and click "Execute" in the upper right-hand corner. Alternatively, you can visit the `/execute` route of your ngrok url in your browser to automatically trigger an execution. Watch the [ngrok agent dashboard](http://localhost:4040) for callbacks from 1Shot. You should see a `200 OK` message in a few seconds on the `/python` route. 
