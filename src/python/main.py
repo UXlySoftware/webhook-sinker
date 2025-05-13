@@ -120,6 +120,7 @@ async def lifespan(app: FastAPI):
 # create the FastAPI app and register the lifespan event
 app = FastAPI(lifespan=lifespan)
 
+# this is the route where we will receive and authenticate webhook callbacks from 1Shot
 @app.post("/1shot", dependencies=[Depends(webhookAuthenticator())])
 async def handle_python_webhook(request: Request):
     logger.info("Webhook received.")
