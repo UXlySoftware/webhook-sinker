@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, HTTPException, Depends
 
+# import the helper verification function from the uxly_1shot_client package
 from uxly_1shot_client import verify_webhook
 
 # we import the async 1Shot client from the oneshot.py file as a singleton
@@ -34,7 +35,7 @@ class webhookAuthenticator:
             if not signature:
                 raise HTTPException(status_code=400, detail="Signature field missing")
             
-            # look up the transaction endpoint the generated the callback and get the public key
+            # look up the transaction endpoint that generated the callback and get the public key
             # in a production application, store the public key in a database or cache for faster access
             transaction_endpoint = await oneshot_client.transactions.get(
                 transaction_id=body["data"]["transactionId"],
@@ -53,6 +54,7 @@ class webhookAuthenticator:
             if not is_valid:
                 raise HTTPException(status_code=403, detail="Invalid signature")
         except Exception as e:
+            logger.error(f"Error verifying webhook: {e}")
             raise HTTPException(status_code=500, detail=f"Internal error: {e}")
 
 # for convenience, we are going to automaically create an endoint when we start the FastAPI server
@@ -114,16 +116,40 @@ async def lifespan(app: FastAPI):
     else:
         logger.info(f"Transaction endpoint already exists, skipping creation.")
 
-    app.state.myWebhook = webhookAuthenticator()
     yield
 
 # create the FastAPI app and register the lifespan event
 app = FastAPI(lifespan=lifespan)
 
-@app.post("/1shot", dependencies=[Depends(lambda: app.state.myWebhook)])
+@app.post("/1shot", dependencies=[Depends(webhookAuthenticator())])
 async def handle_python_webhook(request: Request):
     logger.info("Webhook received.")
     return {"message": "Webhook received and signature verified"}
+
+# convenience endpoint to trigger the mint function so you can see the webhook in action
+@app.get("/execute")
+async def execute_mint_function(request: Request):
+    # look up the transaction endpoint we created on server start
+    transaction_endpoints = await oneshot_client.transactions.list(
+        business_id=BUSINESS_ID,
+        params={"chain_id": "11155111", "name": "1Shot Webhook Demo"}
+    )
+
+    # then call it with the necessary parameters generate an execution
+    execution = await oneshot_client.transactions.execute(
+        transaction_id=transaction_endpoints.response[0].id, 
+        params={
+            "to": "0x3546d802e6b3a1c1826b46805fc977a5bd29e990", 
+            "amount": "1000000000000000000"
+        },
+        memo="hello"
+    )
+    if execution.id:
+        logger.info(f"Execution successful: {execution.id}")
+        return {"message": f"Execution successful: {execution.id}"}
+    else:
+        logger.error(f"Execution failed: {execution}")
+        raise HTTPException(status_code=500, detail="Execution failed")
 
 @app.get('/healthcheck')
 async def root():
