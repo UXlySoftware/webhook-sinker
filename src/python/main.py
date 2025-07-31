@@ -35,20 +35,20 @@ class webhookAuthenticator:
             if not signature:
                 raise HTTPException(status_code=400, detail="Signature field missing")
             
-            # look up the transaction endpoint that generated the callback and get the public key
+            # look up the Contract Method that generated the callback and get the public key
             # in a production application, store the public key in a database or cache for faster access
-            transaction_endpoint = await oneshot_client.transactions.get(
-                transaction_id=body["data"]["transactionId"],
+            contract_method = await oneshot_client.contract_methods.get(
+                contract_method_id=body["data"]["contractMethodId"],
             )
 
-            if not transaction_endpoint.public_key:
+            if not contract_method.public_key:
                 raise HTTPException(status_code=400, detail="Public key not found")
 
-            # Verify the signature with the public key you stored corresponding to the transaction ID
+            # Verify the signature with the public key you stored corresponding to the Contract Method ID
             is_valid = verify_webhook(
                 body=body,
                 signature=signature,
-                public_key=transaction_endpoint.public_key
+                public_key=contract_method.public_key
             )
 
             if not is_valid:
@@ -62,7 +62,7 @@ class webhookAuthenticator:
 # this will save us the hassle of having to create it manually
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Lifespan event to check for or create a demo 1Shot API transaction endpoint."""
+    """Lifespan event to check for or create a demo 1Shot API Contract Method."""
     # lets start by checking that we have an escrow wallet provisioned for our account on the Sepolia network
     # if not we will exit since we must have one to continue
     wallets = await oneshot_client.wallets.list(BUSINESS_ID, {"chain_id": "11155111"})
@@ -74,24 +74,24 @@ async def lifespan(app: FastAPI):
     else:
         logger.info("Escrow wallet is provisioned and has sufficient funds.")
 
-    # to keep this demo self contained, we are going to check our 1Shot API account for an existing transaction endpoint for the 
+    # to keep this demo self contained, we are going to check our 1Shot API account for an existing Contract Method for the 
     # contract at 0x17Ed2c50596E1C74175F905918dEd2d2042b87f3 on the Sepolia network, if we don't have one, we'll create it automatically
     # then we'll use that endpoint in the conversation flow to deploy tokens from a Telegram conversation
     # for a more serious application you will probably create your required contract function endpoints ahead of time
-    # and input their transaction ids as environment variables
-    transaction_endpoints = await oneshot_client.transactions.list(
+    # and input their contract method ids as environment variables
+    contract_methods = await oneshot_client.contract_methods.list(
         business_id=BUSINESS_ID,
         params={"chain_id": "11155111", "name": "1Shot Webhook Demo"}
     )
-    if len(transaction_endpoints.response) == 0:
-        logger.info("Creating new transaction endpoint for webhook demo.")
+    if len(contract_methods.response) == 0:
+        logger.info("Creating new Contract Method for webhook demo.")
         endpoint_payload = {
-            "chain": "11155111",
+            "chainId": "11155111",
             "contractAddress": "0x17Ed2c50596E1C74175F905918dEd2d2042b87f3",
-            "escrowWalletId": wallets.response[0].id,
+            "walletId": wallets.response[0].id,
             "name": "1Shot Webhook Demo",
             "description": "This mints some tokens on a predeployed ERC20 contract on the Sepolia Network.",
-            "callbackUrl": f"{CALLBACK_URL}", # this will register our ngrok static url as the callback url for the transaction endpoint
+            "callbackUrl": f"{CALLBACK_URL}", # this will register our ngrok static url as the callback url for the Contract Method
             "stateMutability": "nonpayable",
             "functionName": "mint",
             "inputs": [
@@ -108,12 +108,12 @@ async def lifespan(app: FastAPI):
             ],
             "outputs": []
         }
-        transaction_endpoint = await oneshot_client.transactions.create(
+        contract_method = await oneshot_client.contract_methods.create(
             business_id=BUSINESS_ID,
             params=endpoint_payload
         )
     else:
-        logger.info(f"Transaction endpoint already exists, skipping creation.")
+        logger.info(f"Contract Method already exists, skipping creation.")
 
     yield
 
@@ -129,15 +129,15 @@ async def handle_python_webhook(request: Request):
 # convenience endpoint to trigger the mint function so you can see the webhook in action
 @app.get("/execute")
 async def execute_mint_function(request: Request):
-    # look up the transaction endpoint we created on server start
-    transaction_endpoints = await oneshot_client.transactions.list(
+    # look up the Contract Method we created on server start
+    contract_methods = await oneshot_client.contract_methods.list(
         business_id=BUSINESS_ID,
         params={"chain_id": "11155111", "name": "1Shot Webhook Demo"}
     )
 
     # then call it with the necessary parameters generate an execution
-    execution = await oneshot_client.transactions.execute(
-        transaction_id=transaction_endpoints.response[0].id, 
+    execution = await oneshot_client.contract_methods.execute(
+        contract_method_id=contract_methods.response[0].id, 
         params={
             "to": "0x3546d802e6b3a1c1826b46805fc977a5bd29e990", 
             "amount": "1000000000000000000"
